@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model adresses {
+  id         Int         @id @default(autoincrement()) @db.UnsignedInt
+  state_id   Int         @db.UnsignedInt
+  city       String      @unique(map: "city") @db.VarChar(255)
+  zip_code   String      @unique(map: "zip_code") @db.Char(8)
+  complement String?     @db.VarChar(255)
+  states     states      @relation(fields: [state_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "adresses_ibfk_1")
+  affiliates affiliates?
+  people     people[]
+
+  @@index([state_id], map: "state_id")
+}
+
+model affiliates {
+  id           Int            @id @default(autoincrement()) @db.UnsignedInt
+  name         String         @unique(map: "name_UNIQUE") @db.VarChar(255)
+  adress_id    Int            @unique(map: "adress_id_UNIQUE") @db.UnsignedInt
+  contacts_id  Int            @db.UnsignedInt
+  adresses     adresses       @relation(fields: [adress_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "affiliates_ibfk_1")
+  contacts     contacts       @relation(fields: [contacts_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "affiliates_ibfk_2")
+  appointments appointments[]
+
+  @@index([contacts_id], map: "affiliates_ibfk_2")
+}
+
+model appointments {
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  doctor_id             Int                     @db.UnsignedInt
+  patient_id            Int                     @db.UnsignedInt
+  affiliate_id          Int                     @db.UnsignedInt
+  date_time             DateTime                @default(now()) @db.Timestamp(0)
+  status_id             Int                     @db.UnsignedInt
+  affiliates            affiliates              @relation(fields: [affiliate_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appointments_ibfk_3")
+  doctors               doctors                 @relation(fields: [doctor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appointments_ibfk_1")
+  patients              patients                @relation(fields: [patient_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appointments_ibfk_2")
+  status                status                  @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appointments_ibfk_4")
+  appointments_services appointments_services[]
+
+  @@index([affiliate_id], map: "affiliate_id")
+  @@index([doctor_id], map: "doctor_id")
+  @@index([patient_id], map: "patient_id")
+  @@index([status_id], map: "status_id")
+}
+
+model appointments_services {
+  appointment_id Int          @db.UnsignedInt
+  service_id     Int          @db.UnsignedInt
+  appointments   appointments @relation(fields: [appointment_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appointments_services_ibfk_1")
+  services       services     @relation(fields: [service_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "appointments_services_ibfk_2")
+
+  @@id([appointment_id, service_id])
+  @@index([service_id], map: "service_id")
+}
+
+model contacts {
+  id         Int          @id @default(autoincrement()) @db.UnsignedInt
+  phones_id  Int          @db.UnsignedInt
+  email      String       @unique(map: "email_UNIQUE") @db.VarChar(254)
+  phones     phones       @relation(fields: [phones_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_contacts_phones")
+  affiliates affiliates[]
+  people     people[]
+
+  @@index([phones_id], map: "FK_contacts_phones_idx")
+}
+
+model doctors {
+  id           Int            @id @default(autoincrement()) @db.UnsignedInt
+  person_id    Int            @unique(map: "person_id") @db.UnsignedInt
+  people       people         @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "doctors_ibfk_1")
+  appointments appointments[]
+}
+
+model healthcare_plans {
+  id       Int        @id @default(autoincrement()) @db.UnsignedInt
+  name     String     @unique(map: "name") @db.VarChar(255)
+  value    String     @db.VarChar(7)
+  patients patients[]
+}
+
+model patients {
+  id                 Int              @id @default(autoincrement()) @db.UnsignedInt
+  person_id          Int              @unique(map: "person_id") @db.UnsignedInt
+  healthcare_plan_id Int              @db.UnsignedInt
+  healthcare_plans   healthcare_plans @relation(fields: [healthcare_plan_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "patients_ibfk_2")
+  people             people           @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "patients_ibfk_1")
+  appointments       appointments[]
+
+  @@index([healthcare_plan_id], map: "healthcare_plan_id")
+}
+
+model people {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  name        String    @db.VarChar(255)
+  adress_id   Int       @db.UnsignedInt
+  contacts_id Int       @db.UnsignedInt
+  cpf         String    @unique(map: "cpf") @db.Char(11)
+  adresses    adresses  @relation(fields: [adress_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "people_ibfk_1")
+  contacts    contacts  @relation(fields: [contacts_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "people_ibfk_2")
+  doctors     doctors?
+  patients    patients?
+
+  @@index([adress_id], map: "adress_id")
+  @@index([contacts_id], map: "contacts_id")
+}
+
+model phones {
+  id                   Int        @id @default(autoincrement()) @db.UnsignedInt
+  primary_phone_number String     @unique(map: "primary_phone_number_UNIQUE") @db.Char(14)
+  second_phone_number  String?    @db.Char(14)
+  contacts             contacts[]
+}
+
+model services {
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  name                  String                  @unique(map: "name") @db.VarChar(255)
+  description           String                  @unique(map: "description") @db.VarChar(255)
+  appointments_services appointments_services[]
+}
+
+model states {
+  id       Int        @id @default(autoincrement()) @db.UnsignedInt
+  name     String     @unique(map: "name") @db.VarChar(255)
+  initials String     @unique(map: "initials") @db.Char(2)
+  adresses adresses[]
+}
+
+model status {
+  id           Int            @id @default(autoincrement()) @db.UnsignedInt
+  name         String         @unique(map: "name") @db.VarChar(255)
+  description  String         @unique(map: "description") @db.VarChar(255)
+  appointments appointments[]
+}
+
+model users {
+  id       Int    @id @default(autoincrement())
+  email    String @unique(map: "email_UNIQUE") @db.VarChar(255)
+  password String @db.VarChar(255)
+}

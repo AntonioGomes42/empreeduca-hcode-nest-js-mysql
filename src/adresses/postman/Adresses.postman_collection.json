@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "7afe7b1a-e54f-4db0-a3f9-2f47317290d9",
+		"name": "Adresses",
+		"description": "## This route can be acessed by **/adresses**. It serves to **GET, CREATE, UPDATE and DELETE** addresses on hospital databases.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17369721"
+	},
+	"item": [
+		{
+			"name": "getAll()",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_hash}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{nest_loca}}/adresses",
+					"host": [
+						"{{nest_loca}}"
+					],
+					"path": [
+						"adresses"
+					]
+				},
+				"description": "### This method lists **all addresses**.\n\n**NOTE**: To access needs to be logged in."
+			},
+			"response": []
+		},
+		{
+			"name": "getById(id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{nest_loca}}/adresses/3",
+					"host": [
+						"{{nest_loca}}"
+					],
+					"path": [
+						"adresses",
+						"3"
+					]
+				},
+				"description": "### This method lists **a specific address** by an id.\n\n**NOTE**: To access needs to be logged in."
+			},
+			"response": []
+		},
+		{
+			"name": "createAdress(address: CreateAdressDto)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "city",
+							"value": "João Pessoa",
+							"type": "text"
+						},
+						{
+							"key": "zip_code",
+							"value": "56789003",
+							"type": "text"
+						},
+						{
+							"key": "complement",
+							"value": "Próximo a Prefeitura da Cidade",
+							"type": "text"
+						},
+						{
+							"key": "state_id",
+							"value": "14",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{nest_loca}}/adresses",
+					"host": [
+						"{{nest_loca}}"
+					],
+					"path": [
+						"adresses"
+					]
+				},
+				"description": "### This method creates a **new address** by a address of type **CreateAdressDto** passed on request body.\n\n**@***params* passed:\n\n**CreateAdressDto**{\n\n**city:** *string*;\n\n**zip_code:** *string*;\n\n**complement:** *string;* ***(OPTIONAL).***\n\n**state_id:** *number;* ***(FOREIGN KEY FROM STATES TABLE)***\n\n}\n\n**NOTE**: To access needs to be logged in."
+			},
+			"response": []
+		},
+		{
+			"name": "updateAdress(address: UpdateAdressDto)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "city",
+							"value": "João Pessoa",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "zip_code",
+							"value": "50000012",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "complement",
+							"value": "Próximo ao estádio do Almedão.",
+							"type": "text"
+						},
+						{
+							"key": "state_id",
+							"value": "14",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{nest_loca}}/adresses/53",
+					"host": [
+						"{{nest_loca}}"
+					],
+					"path": [
+						"adresses",
+						"53"
+					]
+				},
+				"description": "### This method updates **an existing address** by a address of type **UpdateAdressDto** passed on request body.\n\n**@***params* passed:\n\n**UpdateAdressDto**{\n\n**city:** *string*; ***(OPTIONAL).***\n\n**zip_code:** *string*; ***(OPTIONAL).***\n\n**complement:** *string;* ***(OPTIONAL).***\n\n**state_id:** *number;* ***(FOREIGN KEY FROM STATES TABLE) (OPTIONAL).***\n\n}\n\n**NOTE**: Needs to pass at least one value to update.\n\n**NOTE**: To access needs to be logged in."
+			},
+			"response": []
+		},
+		{
+			"name": "deleteAdress(id)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_hash}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{nest_loca}}/adresses/3",
+					"host": [
+						"{{nest_loca}}"
+					],
+					"path": [
+						"adresses",
+						"3"
+					]
+				},
+				"description": "### This method deletes **a specific address** by an id.\n\n**NOTE**: To access needs to be logged in."
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token_hash}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
